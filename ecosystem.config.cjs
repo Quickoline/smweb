@@ -9,7 +9,8 @@ module.exports = {
       interpreter: "none",
       env: {
         NODE_ENV: "production",
-        PORT: 3000,
+        // 3001 avoids clashes with other tools defaulting to 3000 (EADDRINUSE on :::3000).
+        PORT: 3001,
       },
     },
   ],

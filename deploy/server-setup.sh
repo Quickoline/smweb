@@ -29,6 +29,8 @@ npm ci
 npm run build
 
 pm2 delete smweb 2>/dev/null || true
+# Free port if a stray node/next still holds it (e.g. duplicate start)
+fuser -k 3001/tcp 2>/dev/null || true
 pm2 start ecosystem.config.cjs
 pm2 save
 env PATH="$PATH" pm2 startup systemd -u root --hp /root || true
@@ -39,4 +41,4 @@ if [[ -f deploy/nginx-smweb.conf ]]; then
   nginx -t && systemctl reload nginx
 fi
 
-echo "Done. Next.js: http://127.0.0.1:3000  public: http://$(hostname -I | awk '{print $1}'):8080/"
+echo "Done. Next.js: http://127.0.0.1:3001  public: http://$(hostname -I | awk '{print $1}'):8080/"
