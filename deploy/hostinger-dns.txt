@@ -1,0 +1,26 @@
+Hostinger DNS (hPanel → Domains → DNS / Nameservers)
+Point all A records to your VPS public IP, e.g. 62.72.56.117 (replace if your IP changed).
+
+Use these records (TTL 300–3600):
+
+elizble.com
+  Type A    Host @              Value 62.72.56.117
+  Type A    Host www            Value 62.72.56.117
+
+elizble.in
+  Type A    Host @              Value 62.72.56.117
+  Type A    Host www            Value 62.72.56.117
+
+api.elizble.com
+  Type A    Host api             Value 62.72.56.117
+
+smweb.elizble.com
+  Type A    Host smweb          Value 62.72.56.117
+
+(If Hostinger uses “Name” instead of “Host”: enter api, smweb, www, or @ for root.)
+
+Nameservers: domains must use Hostinger DNS (or your panel where you add these records). Wait for propagation (minutes to a few hours) before Certbot.
+
+Verify from your PC:
+  nslookup api.elizble.com
+  nslookup elizble.com
