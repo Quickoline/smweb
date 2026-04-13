@@ -4,7 +4,7 @@ export function getApiBaseUrl(): string {
   if (raw) return raw.replace(/\/$/, "");
   // `next dev`: talk to local API without configuring env (production build still uses prod host unless env is set).
   if (process.env.NODE_ENV === "development") {
-    return "https://api.elizble.com";
+    return "https://api.elizble.com/api";
   }
-  return "https://api.elizble.com";
+  return "https://api.elizble.com/api";
 }
