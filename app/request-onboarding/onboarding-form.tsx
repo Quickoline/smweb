@@ -45,7 +45,8 @@ export function OnboardingForm() {
     };
 
     try {
-      const res = await fetch(`${getApiBaseUrl()}/onboarding`, {
+      const base = getApiBaseUrl();
+      const res = await fetch(`${base}/onboarding`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -59,7 +60,11 @@ export function OnboardingForm() {
       e.currentTarget.reset();
     } catch (err) {
       setStatus("error");
-      setMessage(err instanceof Error ? err.message : "Something went wrong.");
+      const msg =
+        err instanceof Error
+          ? err.message
+          : "Network error — check API is running and CORS allows this site.";
+      setMessage(msg);
     }
   }
 
@@ -190,8 +195,9 @@ export function OnboardingForm() {
         <input
           id="portfolio"
           name="portfolio_url"
-          type="url"
+          type="text"
           inputMode="url"
+          autoComplete="url"
           className={inputClass}
           placeholder="https://"
           disabled={status === "loading"}
@@ -217,10 +223,17 @@ export function OnboardingForm() {
       >
         {status === "loading" ? "Submitting…" : "Submit onboarding request"}
       </button>
-      <p className="text-center text-xs text-slate-500">
-        Uses <code className="rounded bg-slate-100 px-1">POST /onboarding</code> on{" "}
-        <code className="rounded bg-slate-100 px-1">NEXT_PUBLIC_API_BASE_URL</code>.
-      </p>
+      {process.env.NODE_ENV === "development" ? (
+        <p className="text-center text-xs text-slate-500">
+          Dev API: <code className="rounded bg-slate-100 px-1">{getApiBaseUrl()}</code>
+          {" · "}
+          <code className="rounded bg-slate-100 px-1">POST /onboarding</code>
+        </p>
+      ) : (
+        <p className="text-center text-xs text-slate-500">
+          Submissions are sent securely to our marketplace API.
+        </p>
+      )}
     </form>
   );
 }
