@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getApiBaseUrl } from "@/lib/api-config";
 
 const inputClass =
@@ -19,6 +19,14 @@ const CATEGORY_TO_API: Record<string, string> = {
 export function OnboardingForm() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
+  const [submittedEmail, setSubmittedEmail] = useState("");
+  const successRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (status === "success" && successRef.current) {
+      successRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [status]);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -33,11 +41,13 @@ export function OnboardingForm() {
       return;
     }
 
+    const workEmail = String(fd.get("email") || "").trim();
+
     const body = {
       businessName: String(fd.get("organization") || "").trim(),
       yourName: String(fd.get("name") || "").trim(),
       phone: String(fd.get("phone") || "").trim() || undefined,
-      workEmail: String(fd.get("email") || "").trim(),
+      workEmail,
       primaryCategoryFocus,
       servicesPlanned: String(fd.get("services_planned") || "").trim(),
       portfolioUrl: String(fd.get("portfolio_url") || "").trim() || undefined,
@@ -55,9 +65,13 @@ export function OnboardingForm() {
       if (!res.ok) {
         throw new Error(data.message || `Request failed (${res.status})`);
       }
-      setStatus("success");
-      setMessage(data.message || "Thanks — we received your request.");
       e.currentTarget.reset();
+      setSubmittedEmail(workEmail);
+      setStatus("success");
+      setMessage(
+        data.message ||
+          "Thanks — we received your request and will review it shortly.",
+      );
     } catch (err) {
       setStatus("error");
       const msg =
@@ -68,16 +82,60 @@ export function OnboardingForm() {
     }
   }
 
+  function resetForm() {
+    setStatus("idle");
+    setMessage("");
+    setSubmittedEmail("");
+  }
+
+  if (status === "success") {
+    return (
+      <div
+        ref={successRef}
+        className="rounded-2xl border border-emerald-200/80 bg-gradient-to-b from-emerald-50 to-white px-6 py-10 text-center shadow-sm sm:px-8"
+        role="status"
+        aria-live="polite"
+      >
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+          <svg
+            className="h-9 w-9"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 className="mt-6 font-display text-2xl font-semibold tracking-tight text-slate-900">
+          Request received
+        </h2>
+        <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-slate-600">
+          {message}
+        </p>
+        {submittedEmail ? (
+          <p className="mt-4 text-sm text-slate-500">
+            We’ll follow up at{" "}
+            <span className="font-medium text-slate-700">{submittedEmail}</span>
+          </p>
+        ) : null}
+        <p className="mt-6 text-sm text-slate-600">
+          We usually respond within a few business days with next steps for admin access.
+        </p>
+        <button
+          type="button"
+          onClick={resetForm}
+          className="mt-8 inline-flex rounded-full border border-slate-300 bg-white px-6 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
+        >
+          Submit another request
+        </button>
+      </div>
+    );
+  }
+
   return (
     <form className="space-y-5" onSubmit={onSubmit}>
-      {status === "success" ? (
-        <div
-          className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900"
-          role="status"
-        >
-          {message}
-        </div>
-      ) : null}
       {status === "error" ? (
         <div
           className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-900"
