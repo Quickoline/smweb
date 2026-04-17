@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ANDROID_APK_URL } from "@/lib/download-links";
 
 export const metadata: Metadata = {
   title: "Download the app",
@@ -34,18 +35,19 @@ export default function DownloadPage() {
             </div>
             <h2 className="mt-6 font-display text-xl font-semibold text-slate-900">Android</h2>
             <p className="mt-2 text-sm text-slate-600 leading-relaxed">
-              Install the release APK from your build pipeline, or publish to Google Play when your
-              listing is ready. Replace the link below with your hosted APK or Play Store URL.
+              Download the release APK, then open the file on your phone to install. You may need to
+              allow installs from unknown sources in your device settings.
             </p>
             <a
-              href="#"
+              href={ANDROID_APK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-6 inline-flex w-full items-center justify-center rounded-full bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/20 transition hover:bg-brand-700"
             >
               Download for Android
             </a>
             <p className="mt-3 text-center text-xs text-slate-500">
-              Placeholder link—set <code className="rounded bg-slate-100 px-1">href</code> to your APK
-              or Play Store page.
+              Link opens in a new tab. Complete the download, then install the APK on your device.
             </p>
           </div>
 
