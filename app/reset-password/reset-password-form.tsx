@@ -34,7 +34,7 @@ export function ResetPasswordForm() {
     }
     if (!token.trim()) {
       setStatus("error");
-      setMessage("Missing reset token. Open the link from your email.");
+      setMessage("Missing reset token. Start again from Forgot password.");
       return;
     }
     setStatus("loading");
@@ -70,7 +70,7 @@ export function ResetPasswordForm() {
           Set a new password
         </h1>
         <p className="mt-4 text-slate-600 leading-relaxed">
-          Enter the token from your email (or use the link we sent) and choose a new password.
+          Your reset link fills in the token below. Choose a new password (at least 8 characters).
         </p>
 
         <form onSubmit={onSubmit} className="mt-10 space-y-5">
@@ -86,7 +86,7 @@ export function ResetPasswordForm() {
               value={token}
               onChange={(e) => setToken(e.target.value)}
               className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20"
-              placeholder="Pasted from email"
+              placeholder="From the reset link"
             />
           </div>
           <div>
@@ -140,7 +140,7 @@ export function ResetPasswordForm() {
 
         <p className="mt-10 text-center text-sm text-slate-500">
           <Link href="/forgot-password" className="font-medium text-brand-600 hover:text-brand-700">
-            Request a new link
+            Forgot password again
           </Link>
           {" · "}
           <Link href="/" className="font-medium text-brand-600 hover:text-brand-700">

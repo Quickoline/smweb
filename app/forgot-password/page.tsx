@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { getApiBaseUrl } from "@/lib/api-config";
 
 export default function ForgotPasswordPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -25,11 +27,16 @@ export default function ForgotPasswordPage() {
         setMessage(typeof data.message === "string" ? data.message : "Something went wrong.");
         return;
       }
+      const token = typeof data.token === "string" ? data.token.trim() : "";
+      if (token) {
+        router.push(`/reset-password?token=${encodeURIComponent(token)}`);
+        return;
+      }
       setStatus("done");
       setMessage(
         typeof data.message === "string"
           ? data.message
-          : "If an account exists for that email, we sent instructions."
+          : "If an account exists for that email, you can try again or sign in."
       );
     } catch {
       setStatus("error");
@@ -45,7 +52,7 @@ export default function ForgotPasswordPage() {
           Forgot password
         </h1>
         <p className="mt-4 text-slate-600 leading-relaxed">
-          Enter the email you registered with. If it matches an account, we&apos;ll send a reset link.
+          Enter the email you registered with. If it matches an account, you&apos;ll continue to set a new password on the next page.
         </p>
 
         <form onSubmit={onSubmit} className="mt-10 space-y-5">
@@ -70,7 +77,7 @@ export default function ForgotPasswordPage() {
             disabled={status === "loading"}
             className="w-full rounded-full bg-brand-600 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/20 transition hover:bg-brand-700 disabled:opacity-60"
           >
-            {status === "loading" ? "Sending…" : "Send reset link"}
+            {status === "loading" ? "Continuing…" : "Continue"}
           </button>
         </form>
 
